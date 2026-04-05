@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TMG Investment Daily Sales Entry - Marts To Go 5</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .store-name {
+            font-size: 18px;
+            color: #28a745;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .required {
+            color: red;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .read-only {
+            background-color: #f5f5f5;
+            cursor: not-allowed;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .section {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            font-size: 12px;
+            color: #667eea;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .section .form-group {
+            margin-bottom: 12px;
+        }
+
+        .display-value {
+            padding: 12px;
+            background-color: #f0f0f0;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            text-align: right;
+        }
+
+        .display-value.deposit {
+            background-color: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+        }
+
+        .with-comment {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .with-comment input {
+            width: 100%;
+        }
+
+        .suggestion-box {
+            padding: 12px;
+            background: #e8f5e9;
+            border-left: 4px solid #28a745;
+            border-radius: 4px;
+            color: #155724;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status-message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            display: none;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .status-message.success {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+        }
+
+        .status-message.error {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            color: #721c24;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .short-over-display {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: default;
+            margin-top: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .short-over-display.negative {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .short-over-display.positive {
+            background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .short-over-display.zero {
+            background: #343a40;
+            color: white;
+            box-shadow: 0 4px 15px rgba(52, 58, 64, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">📊</div>
+            <div class="title">TMG Investment</div>
+            <div class="store-name">Marts To Go 5</div>
+            <div class="subtitle">Daily Sales Entry Form</div>
+        </div>
+
+        <form id="salesForm">
+            <!-- Required Fields -->
+            <div class="form-group">
+                <label>Month <span class="required">*</span></label>
+                <select id="month" name="month" required>
+                    <option value="">Select Month</option>
+                    <option value="January">January</option>
+                    <option value="February">February</option>
+                    <option value="March">March</option>
+                    <option value="April">April</option>
+                    <option value="May">May</option>
+                    <option value="June">June</option>
+                    <option value="July">July</option>
+                    <option value="August">August</option>
+                    <option value="September">September</option>
+                    <option value="October">October</option>
+                    <option value="November">November</option>
+                    <option value="December">December</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Date (Day 1-31) <span class="required">*</span></label>
+                <input type="number" id="date" name="date" min="1" max="31" placeholder="5" required>
+            </div>
+
+            <!-- Sales Data -->
+            <div class="section">
+                <div class="section-title">📈 Sales Data</div>
+                <div class="form-group">
+                    <label>6% Sales</label>
+                    <input type="number" id="sixPercentSales" name="sixPercentSales" step="0.01" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Non-Tax Sales</label>
+                    <input type="number" id="nonTax" name="nonTax" step="0.01" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Total Sales (Auto-calculated)</label>
+                    <div class="display-value" id="totalSalesDisplay">0.00</div>
+                </div>
+                <div class="form-group">
+                    <label>Sales Tax Collected (6% of 6% Sales)</label>
+                    <div class="display-value" id="taxDisplay">0.00</div>
+                </div>
+            </div>
+
+            <!-- Cash Section -->
+            <div class="section">
+                <div class="section-title">💰 Cash & Operations</div>
+                <div class="form-group">
+                    <label>Money Order</label>
+                    <input type="number" id="moIn" name="moIn" step="0.01" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Cash Pay Out + Comment</label>
+                    <div class="with-comment">
+                        <div>
+                            <label style="font-size: 12px; margin-bottom: 5px;">Amount</label>
+                            <input type="number" id="cashPayOutAmount" name="cashPayOutAmount" step="0.01" placeholder="0.00">
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; margin-bottom: 5px;">Comment</label>
+                            <input type="text" id="cashPayOutComment" name="cashPayOutComment" placeholder="e.g., Lottery Mistake">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>EBT/Card In</label>
+                    <input type="number" id="ebtCardIn" name="ebtCardIn" step="0.01" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>ATM/Cash Out</label>
+                    <input type="number" id="atmCashOut" name="atmCashOut" step="0.01" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Cigarette Coupon</label>
+                    <input type="number" id="cigaretteCoup" name="cigaretteCoup" step="0.01" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Deposit OPS (Auto-calculated)</label>
+                    <div class="display-value deposit" id="depositOpsDisplay">0.00</div>
+                </div>
+            </div>
+
+            <!-- Gas Section -->
+            <div class="section">
+                <div class="section-title">⛽ Gas</div>
+                <div class="form-group">
+                    <label>Gas Gallons</label>
+                    <input type="number" id="gasGallons" name="gasGallons" step="0.00001" placeholder="0.00000">
+                </div>
+                <div class="form-group">
+                    <label>Gas Sales</label>
+                    <input type="number" id="gasSales" name="gasSales" step="0.01" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Credit/Debit</label>
+                    <input type="number" id="creditDebit" name="creditDebit" step="0.01" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Deposit Gas (Auto-calculated)</label>
+                    <div class="display-value deposit" id="depositGasDisplay">0.00</div>
+                </div>
+            </div>
+
+            <!-- Lotto Section -->
+            <div class="section">
+                <div class="section-title">🎰 Lottery</div>
+                <div class="form-group">
+                    <label>Scratch Off Sales</label>
+                    <input type="number" id="scratchOff" name="scratchOff" step="0.01" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Online Lotto</label>
+                    <input type="number" id="onlineLotto" name="onlineLotto" step="0.01" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Lotto Payout</label>
+                    <input type="number" id="lottoPayout" name="lottoPayout" step="0.01" placeholder="0.00">
+                </div>
+                <div id="suggestedDepositBox" class="suggestion-box" style="display: none;">
+                    Suggested Deposit in Lottery Acc: <span id="suggestedDepositAmount">0.00</span>
+                </div>
+                <div class="form-group">
+                    <label>Deposit Lotto (Auto-calculated)</label>
+                    <div class="display-value deposit" id="depositLottoDisplay">0.00</div>
+                </div>
+            </div>
+
+            <!-- Deposits Section -->
+            <div class="section">
+                <div class="section-title">🏦 Deposits & Other</div>
+                <div class="form-group">
+                    <label>House Charge</label>
+                    <input type="number" id="houseCharge" name="houseCharge" step="0.01" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Total Cash Must Have (Auto-calculated)</label>
+                    <div class="display-value deposit" id="totalCashMustHaveDisplay">0.00</div>
+                </div>
+                <div class="form-group">
+                    <label>Deposit in Operations</label>
+                    <input type="number" id="depInOps" name="depInOps" step="0.01" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Deposit in Lottery</label>
+                    <input type="number" id="depInLotto" name="depInLotto" step="0.01" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <button type="button" class="short-over-display zero" id="shortOverDisplay">
+                        <span id="shortOverValue">Short / Over: 0.00</span>
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" id="submitBtn">Submit Daily Sales</button>
+            <div id="statusMessage" class="status-message"></div>
+        </form>
+    </div>
+
+    <script>
+        const STORE_ID = "Marts To Go 5";
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXP_csInb2XQS7ltZMuXSJLWY_k5Vy1kzlNBBkV1Wlp2gAdaHhoVkar2bHU-LE_zpY/exec";
+
+        const form = document.getElementById('salesForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const statusMessage = document.getElementById('statusMessage');
+
+        // Auto-calculate displays
+        document.getElementById('sixPercentSales').addEventListener('input', updateCalculations);
+        document.getElementById('nonTax').addEventListener('input', updateCalculations);
+        document.getElementById('moIn').addEventListener('input', updateCalculations);
+        document.getElementById('cashPayOutAmount').addEventListener('input', updateCalculations);
+        document.getElementById('ebtCardIn').addEventListener('input', updateCalculations);
+        document.getElementById('atmCashOut').addEventListener('input', updateCalculations);
+        document.getElementById('cigaretteCoup').addEventListener('input', updateCalculations);
+        document.getElementById('gasSales').addEventListener('input', updateCalculations);
+        document.getElementById('creditDebit').addEventListener('input', updateCalculations);
+        document.getElementById('scratchOff').addEventListener('input', updateCalculations);
+        document.getElementById('scratchOff').addEventListener('input', updateSuggestion);
+        document.getElementById('onlineLotto').addEventListener('input', updateCalculations);
+        document.getElementById('onlineLotto').addEventListener('input', updateSuggestion);
+        document.getElementById('lottoPayout').addEventListener('input', updateCalculations);
+        document.getElementById('lottoPayout').addEventListener('input', updateSuggestion);
+        document.getElementById('houseCharge').addEventListener('input', updateCalculations);
+        document.getElementById('depInOps').addEventListener('input', updateCalculations);
+        document.getElementById('depInLotto').addEventListener('input', updateCalculations);
+
+        function updateCalculations() {
+            const sixPercent = parseFloat(document.getElementById('sixPercentSales').value) || 0;
+            const nonTax = parseFloat(document.getElementById('nonTax').value) || 0;
+            const moIn = parseFloat(document.getElementById('moIn').value) || 0;
+            const cashPayOut = parseFloat(document.getElementById('cashPayOutAmount').value) || 0;
+            const ebtCardIn = parseFloat(document.getElementById('ebtCardIn').value) || 0;
+            const atmCashOut = parseFloat(document.getElementById('atmCashOut').value) || 0;
+            const cigaretteCoup = parseFloat(document.getElementById('cigaretteCoup').value) || 0;
+            const gasSales = parseFloat(document.getElementById('gasSales').value) || 0;
+            const creditDebit = parseFloat(document.getElementById('creditDebit').value) || 0;
+            const scratchOff = parseFloat(document.getElementById('scratchOff').value) || 0;
+            const onlineLotto = parseFloat(document.getElementById('onlineLotto').value) || 0;
+            const lottoPayout = parseFloat(document.getElementById('lottoPayout').value) || 0;
+            
+            const totalSales = sixPercent + nonTax;
+            const tax = sixPercent * 0.06;
+            
+            // Deposit OPS = (Total Sales + Tax + MO) - Cash Pay Out - EBT - ATM - Cigarette Coup
+            const depositOps = (totalSales + tax + moIn) - cashPayOut - ebtCardIn - atmCashOut - cigaretteCoup;
+            
+            // Deposit Gas = Gas Sales - Credit/Debit
+            const depositGas = gasSales - creditDebit;
+            
+            // Deposit Lotto = Scratch Off + Online Lotto - Lotto Payout
+            const depositLotto = (scratchOff + onlineLotto) - lottoPayout;
+            
+            // Total Cash Must Have = Deposit OPS + Deposit Gas + Deposit Lotto - House Charge
+            const houseCharge = parseFloat(document.getElementById('houseCharge').value) || 0;
+            const totalCashMustHave = depositOps + depositGas + depositLotto - houseCharge;
+            
+            // Short / Over = (Deposit in Operations + Deposit in Lottery) - Total Cash Must Have
+            const depInOps = parseFloat(document.getElementById('depInOps').value) || 0;
+            const depInLotto = parseFloat(document.getElementById('depInLotto').value) || 0;
+            const shortOver = (depInOps + depInLotto) - totalCashMustHave;
+            
+            // Update Short/Over display with color coding
+            const shortOverDisplay = document.getElementById('shortOverDisplay');
+            const shortOverValue = document.getElementById('shortOverValue');
+            shortOverValue.textContent = `Short / Over: ${shortOver.toFixed(2)}`;
+            
+            // Remove all color classes
+            shortOverDisplay.classList.remove('negative', 'positive', 'zero');
+            
+            // Add appropriate class based on value
+            if (shortOver < 0) {
+                shortOverDisplay.classList.add('negative');
+            } else if (shortOver > 0) {
+                shortOverDisplay.classList.add('positive');
+            } else {
+                shortOverDisplay.classList.add('zero');
+            }
+            
+            document.getElementById('totalSalesDisplay').textContent = totalSales.toFixed(2);
+            document.getElementById('taxDisplay').textContent = tax.toFixed(2);
+            document.getElementById('depositOpsDisplay').textContent = depositOps.toFixed(2);
+            document.getElementById('depositGasDisplay').textContent = depositGas.toFixed(2);
+            document.getElementById('depositLottoDisplay').textContent = depositLotto.toFixed(2);
+            document.getElementById('totalCashMustHaveDisplay').textContent = totalCashMustHave.toFixed(2);
+        }
+
+        function updateSuggestion() {
+            const scratchOff = parseFloat(document.getElementById('scratchOff').value) || 0;
+            const onlineLotto = parseFloat(document.getElementById('onlineLotto').value) || 0;
+            const lottoPayout = parseFloat(document.getElementById('lottoPayout').value) || 0;
+            
+            const suggested = (scratchOff + onlineLotto) - lottoPayout;
+            
+            if (scratchOff > 0 || onlineLotto > 0 || lottoPayout > 0) {
+                document.getElementById('suggestedDepositBox').style.display = 'block';
+                document.getElementById('suggestedDepositAmount').textContent = suggested.toFixed(2);
+            } else {
+                document.getElementById('suggestedDepositBox').style.display = 'none';
+            }
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            statusMessage.style.display = 'none';
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span>Submitting...';
+
+            const formData = {
+                storeId: STORE_ID,
+                month: document.getElementById('month').value,
+                date: document.getElementById('date').value,
+                sixPercentSales: parseFloat(document.getElementById('sixPercentSales').value) || null,
+                nonTax: parseFloat(document.getElementById('nonTax').value) || null,
+                moIn: parseFloat(document.getElementById('moIn').value) || null,
+                cashPayOut: parseFloat(document.getElementById('cashPayOutAmount').value) || null,
+                cashPayOutComment: document.getElementById('cashPayOutComment').value || null,
+                ebtCardIn: parseFloat(document.getElementById('ebtCardIn').value) || null,
+                atmCashOut: parseFloat(document.getElementById('atmCashOut').value) || null,
+                cigaretteCoup: parseFloat(document.getElementById('cigaretteCoup').value) || null,
+                gasGallons: parseFloat(document.getElementById('gasGallons').value) || null,
+                gasSales: parseFloat(document.getElementById('gasSales').value) || null,
+                creditDebit: parseFloat(document.getElementById('creditDebit').value) || null,
+                scratchOff: parseFloat(document.getElementById('scratchOff').value) || null,
+                onlineLotto: parseFloat(document.getElementById('onlineLotto').value) || null,
+                lottoPayout: parseFloat(document.getElementById('lottoPayout').value) || null,
+                houseCharge: parseFloat(document.getElementById('houseCharge').value) || null,
+                depInOps: parseFloat(document.getElementById('depInOps').value) || null,
+                depInLotto: parseFloat(document.getElementById('depInLotto').value) || null
+            };
+
+            try {
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify(formData),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                statusMessage.className = 'status-message success';
+                statusMessage.innerHTML = '✅ Success! Your sales data has been submitted and recorded.';
+                statusMessage.style.display = 'block';
+
+                form.reset();
+                updateCalculations();
+                updateSuggestion();
+
+            } catch (error) {
+                statusMessage.className = 'status-message error';
+                statusMessage.innerHTML = '❌ Error: ' + error.message;
+                statusMessage.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Submit Daily Sales';
+            }
+        });
+    </script>
+</body>
+</html>
